@@ -1,0 +1,27 @@
+diff --git a/to_ppm.c b/to_ppm.c
+index 95ffe91..2f6c77b 100644
+--- a/to_ppm.c
++++ b/to_ppm.c
+@@ -14,7 +14,7 @@ void put_scanline_someplace(JSAMPROW buffer : count(row_stride), int row_stride)
+ struct my_error_mgr {
+   struct jpeg_error_mgr pub;	/* "public" fields */
+ 
+-  jmp_buf setjmp_buffer;	/* for return to caller */
++ struct __jmp_buf_tag setjmp_buffer _Checked[1];	/* for return to caller */
+ };
+ 
+ typedef _Ptr<struct my_error_mgr> my_error_ptr;
+@@ -151,7 +151,12 @@ read_JPEG_file (_Nt_array_ptr<char> filename)
+      */
+     (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+     /* Assume put_scanline_someplace wants a pointer and sample count. */
+-    put_scanline_someplace(_Assume_bounds_cast<JSAMPROW >(buffer[0],  count(row_stride)), row_stride);
++    JSAMPROW row_unkb : bounds(unknown) = buffer[0];
++    JSAMPROW row : count(row_stride) = 0;
++    _Unchecked {
++      row = _Assume_bounds_cast<JSAMPROW>(row_unkb,  count(row_stride));
++    }
++    put_scanline_someplace(row, row_stride);
+   }
+ 
+   /* Step 7: Finish decompression */

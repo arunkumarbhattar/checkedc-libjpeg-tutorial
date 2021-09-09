@@ -1,0 +1,25 @@
+.PHONY: test update_tutorial
+
+test: tutorial.sh
+	./tutorial.sh
+
+update_tutorial: tutorial.sh
+	bash -c "sed -i 's/START_COMMIT/$$(git rev-parse HEAD)/' README.md"
+	git checkout --detach
+	git add README.md
+	git commit -m 'Set initial commit'
+	./tutorial.sh
+	update-tutorial-commit-links
+	git add README.md
+	git commit -m 'Update tutorial links'
+
+tutorial.sh: README.md
+	pandoc -t plain -f markdown-raw_html --filter pandoc-tangle $<
+	sed -i '$ s/display/identify -/' $@
+	chmod +x $@
+
+README.docx: README.md
+	pandoc -t docx -o $@ $<
+
+clean:
+	rm -f tutorial.sh README.docx
