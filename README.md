@@ -20,8 +20,8 @@ being converted is adapted from sample code provided as part of the libjpeg
 distribution.
 
 This tutorial is intended to specifically demonstrate how 3C can be used to
-port programs that interact with existing C libraries. For a first 
-tutorial on 3C, see our port of 
+port programs that interact with existing C libraries. For a first
+tutorial on 3C, see our port of
 [tiny-bignum-c](https://github.com/correctcomputation/checkedc-tiny-bignum-c).
 
 # Requirements
@@ -91,9 +91,9 @@ git commit -m "[3c] Initial conversion"
 
 Running the conversion script also emitted *root cause diagnostics* as specified
 by the `-warn-root-cause` option. These diagnostics identify code patterns
-that have specifically prevented a pointer from being made checked (it 
-remains "wild"); this code is a root cause in the sense that it directly affects 
-the identified pointer (which in turn may affect other pointers with a dataflow 
+that have specifically prevented a pointer from being made checked (it
+remains "wild"); this code is a root cause in the sense that it directly affects
+the identified pointer (which in turn may affect other pointers with a dataflow
 relationship). To decide how to proceed with the conversion,
 we can examine the information in the root-cause diagnostics.
 By far, the most common root cause of wildness is that there are
@@ -144,7 +144,7 @@ By default, 3C will not rewrite the types of functions that are not defined. To
 make it infer the types of such functions, 3C can be given the flag
 `-infer-types-for-undefs`. This disables constraints that are typically
 generated which force all undefined functions to remain unchecked, allowing
-Checked C types to be inferred and added to the header as so-called 
+Checked C types to be inferred and added to the header as so-called
 "interop types" (itypes).
 
 There are some important limitations to this flag:
