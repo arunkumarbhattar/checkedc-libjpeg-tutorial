@@ -96,7 +96,7 @@ adjustments to the Checked C code.
 git add out
 git commit -m "[3c] Initial conversion"
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Initial">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/b418e4bcfedcc870e6002e65f0eb8d60b7cfe302" data-commit-subject="Initial">(view changes)</a>.
 
 
 # Converting `jpeglib.h`
@@ -138,7 +138,7 @@ git apply < patches/update_include.patch
 git add convert_all.sh
 git commit -m "[Manual] Update include path"
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Update include path">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/c8003d910d4693c97d4f7441c4abecd53a73f4b5" data-commit-subject="Update include path">(view changes)</a>.
 
 Re-running `./convert_all.sh` will attempt conversion again, but this time with
 the writable copy of `jpeglib.h`, so 3C is capable of making changes to it. This
@@ -150,7 +150,7 @@ causes due to "undefined functions".
 git add out
 git commit -m "[3C] Convert with local header"
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Convert with local header">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/c73e57afbcbb14b33cf0a0acd18ced43c7ccef04" data-commit-subject="Convert with local header">(view changes)</a>.
 
 By default, 3C will not rewrite the types of functions that are not defined. To
 make it infer the types of such functions, 3C can be given the flag
@@ -191,7 +191,7 @@ git apply < patches/add_option.patch
 git add convert_all.sh
 git commit -m "[Manual] Add new option"
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Add new option">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/2fb01f452b04cb14f90965cbdee416476a8fe1d6" data-commit-subject="Add new option">(view changes)</a>.
 
 Running the 3C conversion for a third time and examining the root cause
 diagnostics will show that the undefined functions are no longer reported as
@@ -202,7 +202,7 @@ causes of wildness.
 git add out
 git commit -m "[3C] Convert with new option"
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Convert with new option">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/ec51716c9629e84d3a08b53f6c97a3a32e841b48" data-commit-subject="Convert with new option">(view changes)</a>.
 
 # A Final Root Cause
 
@@ -232,14 +232,14 @@ git apply < patches/insert_itypes.patch
 git add ./include/jpeglib.h
 git commit -m "[Manual] Add itypes in macro"
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Add itypes in macro">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/eb5a93bd826d626bee61ccce85a47c5bc53841f3" data-commit-subject="Add itypes in macro">(view changes)</a>.
 
 ```{.bash file=tutorial.sh}
 ./convert_all.sh
 git add out
 git commit -m "[3C] Convert with itypes in macro"
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Convert with itypes in macro">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/c381097b1fe20bffb5ba9c87c0cad4215c25e5e1" data-commit-subject="Convert with itypes in macro">(view changes)</a>.
 
 At this point, the major issues preventing conversion of the example program
 (unwritable code, undefined functions, and `struct` fields defined in macros)
@@ -253,7 +253,7 @@ cp -r ./out/* .
 git add include/jpeglib.h to_ppm.c
 git commit -m "[Manual] Copy converted files"
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Copy converted files">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/c969724fe46a42db7bbe0efb9d48b9ca8cea7868" data-commit-subject="Copy converted files">(view changes)</a>.
 
 # Compiling the Converted Code
 
@@ -310,7 +310,7 @@ git add include/jpeglib.h to_ppm.c
 git commit -m  "[Manual] Fix errors in converted code."
 make
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Fix errors in converted code">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/6c1fccf39ac166a08ba50faa9aa6192afb684f0c" data-commit-subject="Fix errors in converted code">(view changes)</a>.
 
 # Finishing the Conversion
 
@@ -328,7 +328,7 @@ git add to_ppm.c
 git commit -m "[Manual] Add CHECKED_SCOPE pragma."
 make || true
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Add CHECKED_SCOPE pragma">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/3841a63ad554109c3e1f3621cef7e8bb9902c302" data-commit-subject="Add CHECKED_SCOPE pragma">(view changes)</a>.
 
 The first error is a result of a bounds cast inserted by 3C during conversion.
 Before turning the `CHECKED_SCOPE` pragma on, we fixed a different error by
@@ -373,7 +373,7 @@ git apply < patches/pragma_fixes.patch
 git add -u
 git commit -m  "[Manual] Fix errors in checked scope."
 ```
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/" data-commit-subject="Fix errors in checked scope">(view changes)</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/931f8b3754c5ca43047fe1aacbbc390723f4608d" data-commit-subject="Fix errors in checked scope">(view changes)</a>.
 
 With these changes, the program compiles successfully with the `CHECKED_SCOPE`
 pragma enabled. As a final step, we can check that the program can run without
