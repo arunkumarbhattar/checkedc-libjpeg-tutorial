@@ -40,9 +40,17 @@ This tutorial uses these repositories at commits
 respectively.
 
 The premise of this tutorial is to convert C code that depends on libjpeg, so
-the library should be installed. A copy of the relevant header file is included
+the library should be installed. On Ubunutu, it can be installed with
+`sudo apt install libjpeg-dev`.
+
+<!--
+NOTE: The tutorial currently doesn't work properly without libjpeg installed,
+      so I've commented this part out. It should be able to work in priniple.
+
+A copy of the relevant header file is included
 with the tutorial, so the conversion steps can be followed regardless, but it
 must be installed to compile and execute the converted program.
+-->
 
 The makefile and conversion script included with this tutorial assume that the
 `3c` Checked C version of `clang` are on your path. If you cloned 3c into your
