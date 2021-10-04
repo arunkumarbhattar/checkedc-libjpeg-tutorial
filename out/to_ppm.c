@@ -4,7 +4,7 @@
 #define HAVE_PROTOTYPES
 #include <jpeglib.h>
 
-void put_scanline_someplace(JSAMPROW buffer : itype(_Array_ptr<JSAMPLE>) count(row_stride), int row_stride) {
+void put_scanline_someplace(JSAMPROW buffer : count(row_stride), int row_stride) {
   for (int i = 0; i < row_stride; i++)
     printf("%3d ", buffer[i]);
   printf("\n");
@@ -23,7 +23,7 @@ typedef struct my_error_mgr * my_error_ptr;
  */
 
 METHODDEF(void)
-my_error_exit (j_common_ptr cinfo)
+my_error_exit (j_common_ptr cinfo : itype(_Ptr<struct jpeg_common_struct>))
 {
   /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
   my_error_ptr myerr = (my_error_ptr) cinfo->err;
@@ -50,12 +50,12 @@ read_JPEG_file (_Nt_array_ptr<char> filename)
   /* This struct contains the JPEG decompression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).
    */
-  struct jpeg_decompress_struct cinfo;
+  struct jpeg_decompress_struct cinfo = {};
   /* We use our private extension JPEG error handler.
    * Note that this struct must live as long as the main JPEG parameter
    * struct, to avoid dangling-pointer problems.
    */
-  struct my_error_mgr jerr;
+  struct my_error_mgr jerr = {};
   /* More stuff */
   FILE * infile;		/* source file */
   JSAMPARRAY buffer;		/* Output row buffer */
@@ -124,8 +124,8 @@ read_JPEG_file (_Nt_array_ptr<char> filename)
   /* JSAMPLEs per row in output buffer */
   row_stride = cinfo.output_width * cinfo.output_components;
   /* Make a one-row-high sample array that will go away when done with image */
-  buffer = (*cinfo.mem->alloc_sarray)
-		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+  buffer = ((JSAMPARRAY )(*cinfo.mem->alloc_sarray)
+		((_Ptr<struct jpeg_common_struct>) &cinfo, JPOOL_IMAGE, row_stride, 1));
 
   if (cinfo.output_components == 1) {
     printf("P2\n");
@@ -150,7 +150,7 @@ read_JPEG_file (_Nt_array_ptr<char> filename)
      */
     (void) jpeg_read_scanlines(&cinfo, buffer, 1);
     /* Assume put_scanline_someplace wants a pointer and sample count. */
-    put_scanline_someplace(buffer[0], row_stride);
+    put_scanline_someplace(_Assume_bounds_cast<JSAMPROW >(buffer[0],  count(row_stride)), row_stride);
   }
 
   /* Step 7: Finish decompression */
