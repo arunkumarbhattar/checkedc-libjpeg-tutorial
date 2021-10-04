@@ -67,8 +67,8 @@ extern "C" {
  */
 
 typedef _Array_ptr<JSAMPLE> JSAMPROW;      /* ptr to one image row of pixel samples. */
-typedef JSAMPROW *JSAMPARRAY;   /* ptr to some rows (a 2-D sample array) */
-typedef JSAMPARRAY *JSAMPIMAGE; /* a 3-D sample array: top index is color */
+typedef _Array_ptr<JSAMPROW> JSAMPARRAY;   /* ptr to some rows (a 2-D sample array) */
+typedef _Ptr<JSAMPARRAY> JSAMPIMAGE; /* a 3-D sample array: top index is color */
 
 typedef JCOEF JBLOCK _Checked[64]; /* one block of coefficients */
 typedef _Ptr<JBLOCK> JBLOCKROW;      /* pointer to one row of coefficient blocks */
@@ -287,9 +287,9 @@ struct jpeg_common_struct {
    */
 };
 
-typedef struct jpeg_common_struct *j_common_ptr;
-typedef struct jpeg_compress_struct *j_compress_ptr;
-typedef struct jpeg_decompress_struct *j_decompress_ptr;
+typedef _Ptr<struct jpeg_common_struct> j_common_ptr;
+typedef _Ptr<struct jpeg_compress_struct> j_compress_ptr;
+typedef _Ptr<struct jpeg_decompress_struct> j_decompress_ptr;
 
 
 /* Master record for a compression instance */
@@ -719,11 +719,11 @@ struct jpeg_decompress_struct {
 
 struct jpeg_error_mgr {
   /* Error exit handler: does not return to caller */
-  _Ptr<void (j_common_ptr cinfo : itype(_Ptr<struct jpeg_common_struct>))> error_exit;
+  _Ptr<void (_Ptr<struct jpeg_common_struct> cinfo)> error_exit;
   /* Conditionally emit a trace or warning message */
   _Ptr<void (_Ptr<struct jpeg_common_struct> cinfo, int msg_level)> emit_message;
   /* Routine that actually outputs a trace or error message */
-  _Ptr<void (j_common_ptr cinfo)> output_message;
+  _Ptr<void (_Ptr<struct jpeg_common_struct> cinfo)> output_message;
   /* Format a message string for the most recent JPEG error or message */
   _Ptr<void (_Ptr<struct jpeg_common_struct> cinfo, _Ptr<char> buffer)> format_message;
 #define JMSG_LENGTH_MAX  200    /* recommended size of format_message buffer */
@@ -859,7 +859,7 @@ struct jpeg_memory_mgr {
 /* Routine signature for application-supplied marker processing methods.
  * Need not pass marker code since it is stored in cinfo->unread_marker.
  */
-typedef boolean (*jpeg_marker_parser_method) (j_decompress_ptr cinfo);
+typedef _Ptr<boolean (j_decompress_ptr cinfo)> jpeg_marker_parser_method;
 
 
 /* Originally, this macro was used as a way of defining function prototypes
@@ -873,7 +873,7 @@ typedef boolean (*jpeg_marker_parser_method) (j_decompress_ptr cinfo);
 
 
 /* Default error-management setup */
-EXTERN(struct jpeg_error_mgr *) jpeg_std_error(struct jpeg_error_mgr *err);
+extern struct jpeg_error_mgr *jpeg_std_error(struct jpeg_error_mgr *err : itype(_Ptr<struct jpeg_error_mgr>)) : itype(_Ptr<struct jpeg_error_mgr>);
 
 /* Initialization of JPEG compression objects.
  * jpeg_create_compress() and jpeg_create_decompress() are the exported
@@ -888,86 +888,68 @@ EXTERN(struct jpeg_error_mgr *) jpeg_std_error(struct jpeg_error_mgr *err);
 #define jpeg_create_decompress(cinfo) \
   jpeg_CreateDecompress((cinfo), JPEG_LIB_VERSION, \
                         (size_t)sizeof(struct jpeg_decompress_struct))
-EXTERN(void) jpeg_CreateCompress(j_compress_ptr cinfo, int version,
-                                 size_t structsize);
-EXTERN(void) jpeg_CreateDecompress(j_decompress_ptr cinfo, int version,
-                                   size_t structsize);
+EXTERN(void) jpeg_CreateCompress(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), int version, size_t structsize);
+EXTERN(void) jpeg_CreateDecompress(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), int version, size_t structsize);
 /* Destruction of JPEG compression objects */
-EXTERN(void) jpeg_destroy_compress(j_compress_ptr cinfo);
-EXTERN(void) jpeg_destroy_decompress(j_decompress_ptr cinfo);
+EXTERN(void) jpeg_destroy_compress(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr));
+EXTERN(void) jpeg_destroy_decompress(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
 
 /* Standard data source and destination managers: stdio streams. */
 /* Caller is responsible for opening the file before and closing after. */
-EXTERN(void) jpeg_stdio_dest(j_compress_ptr cinfo, FILE *outfile);
-EXTERN(void) jpeg_stdio_src(j_decompress_ptr cinfo, FILE *infile);
+EXTERN(void) jpeg_stdio_dest(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), FILE *outfile : itype(_Ptr<FILE>));
+EXTERN(void) jpeg_stdio_src(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), FILE *infile : itype(_Ptr<FILE>));
 
 #if JPEG_LIB_VERSION >= 80 || defined(MEM_SRCDST_SUPPORTED)
 /* Data source and destination managers: memory buffers. */
-EXTERN(void) jpeg_mem_dest(j_compress_ptr cinfo, unsigned char **outbuffer,
-                           unsigned long *outsize);
-EXTERN(void) jpeg_mem_src(j_decompress_ptr cinfo,
-                          const unsigned char *inbuffer, unsigned long insize);
+EXTERN(void) jpeg_mem_dest(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), unsigned char **outbuffer : itype(_Ptr<_Ptr<unsigned char>>), unsigned long *outsize : itype(_Ptr<unsigned long>));
+EXTERN(void) jpeg_mem_src(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), const unsigned char *inbuffer : itype(_Ptr<const unsigned char>), unsigned long insize);
 #endif
 
 /* Default parameter setup for compression */
-EXTERN(void) jpeg_set_defaults(j_compress_ptr cinfo);
+EXTERN(void) jpeg_set_defaults(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr));
 /* Compression parameter setup aids */
-EXTERN(void) jpeg_set_colorspace(j_compress_ptr cinfo,
-                                 J_COLOR_SPACE colorspace);
-EXTERN(void) jpeg_default_colorspace(j_compress_ptr cinfo);
-EXTERN(void) jpeg_set_quality(j_compress_ptr cinfo, int quality,
-                              boolean force_baseline);
-EXTERN(void) jpeg_set_linear_quality(j_compress_ptr cinfo, int scale_factor,
-                                     boolean force_baseline);
+EXTERN(void) jpeg_set_colorspace(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), J_COLOR_SPACE colorspace);
+EXTERN(void) jpeg_default_colorspace(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr));
+EXTERN(void) jpeg_set_quality(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), int quality, boolean force_baseline);
+EXTERN(void) jpeg_set_linear_quality(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), int scale_factor, boolean force_baseline);
 #if JPEG_LIB_VERSION >= 70
-EXTERN(void) jpeg_default_qtables(j_compress_ptr cinfo,
-                                  boolean force_baseline);
+EXTERN(void) jpeg_default_qtables(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), boolean force_baseline);
 #endif
-EXTERN(void) jpeg_add_quant_table(j_compress_ptr cinfo, int which_tbl,
-                                  const unsigned int *basic_table,
-                                  int scale_factor, boolean force_baseline);
+EXTERN(void) jpeg_add_quant_table(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), int which_tbl, const unsigned int *basic_table : itype(_Ptr<const unsigned int>), int scale_factor, boolean force_baseline);
 EXTERN(int) jpeg_quality_scaling(int quality);
-EXTERN(void) jpeg_simple_progression(j_compress_ptr cinfo);
-EXTERN(void) jpeg_suppress_tables(j_compress_ptr cinfo, boolean suppress);
-EXTERN(JQUANT_TBL *) jpeg_alloc_quant_table(j_common_ptr cinfo);
-EXTERN(JHUFF_TBL *) jpeg_alloc_huff_table(j_common_ptr cinfo);
+EXTERN(void) jpeg_simple_progression(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr));
+EXTERN(void) jpeg_suppress_tables(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), boolean suppress);
+extern JQUANT_TBL *jpeg_alloc_quant_table(struct jpeg_common_struct *cinfo : itype(j_common_ptr)) : itype(_Ptr<JQUANT_TBL>);
+extern JHUFF_TBL *jpeg_alloc_huff_table(struct jpeg_common_struct *cinfo : itype(j_common_ptr)) : itype(_Ptr<JHUFF_TBL>);
 
 /* Main entry points for compression */
-EXTERN(void) jpeg_start_compress(j_compress_ptr cinfo,
-                                 boolean write_all_tables);
-EXTERN(JDIMENSION) jpeg_write_scanlines(j_compress_ptr cinfo,
-                                        JSAMPARRAY scanlines,
-                                        JDIMENSION num_lines);
-EXTERN(void) jpeg_finish_compress(j_compress_ptr cinfo);
+EXTERN(void) jpeg_start_compress(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), boolean write_all_tables);
+EXTERN(JDIMENSION) jpeg_write_scanlines(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), JSAMPLE *scanlines : itype(JSAMPARRAY), JDIMENSION num_lines);
+EXTERN(void) jpeg_finish_compress(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr));
 
 #if JPEG_LIB_VERSION >= 70
 /* Precalculate JPEG dimensions for current compression parameters. */
-EXTERN(void) jpeg_calc_jpeg_dimensions(j_compress_ptr cinfo);
+EXTERN(void) jpeg_calc_jpeg_dimensions(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr));
 #endif
 
 /* Replaces jpeg_write_scanlines when writing raw downsampled data. */
-EXTERN(JDIMENSION) jpeg_write_raw_data(j_compress_ptr cinfo, JSAMPIMAGE data,
-                                       JDIMENSION num_lines);
+EXTERN(JDIMENSION) jpeg_write_raw_data(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), JSAMPLE *data : itype(JSAMPIMAGE), JDIMENSION num_lines);
 
 /* Write a special marker.  See libjpeg.txt concerning safe usage. */
-EXTERN(void) jpeg_write_marker(j_compress_ptr cinfo, int marker,
-                               const JOCTET *dataptr, unsigned int datalen);
+EXTERN(void) jpeg_write_marker(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), int marker, const JOCTET *dataptr : itype(_Ptr<const JOCTET>), unsigned int datalen);
 /* Same, but piecemeal. */
-EXTERN(void) jpeg_write_m_header(j_compress_ptr cinfo, int marker,
-                                 unsigned int datalen);
-EXTERN(void) jpeg_write_m_byte(j_compress_ptr cinfo, int val);
+EXTERN(void) jpeg_write_m_header(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), int marker, unsigned int datalen);
+EXTERN(void) jpeg_write_m_byte(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), int val);
 
 /* Alternate compression function: just write an abbreviated table file */
-EXTERN(void) jpeg_write_tables(j_compress_ptr cinfo);
+EXTERN(void) jpeg_write_tables(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr));
 
 /* Write ICC profile.  See libjpeg.txt for usage information. */
-EXTERN(void) jpeg_write_icc_profile(j_compress_ptr cinfo,
-                                    const JOCTET *icc_data_ptr,
-                                    unsigned int icc_data_len);
+EXTERN(void) jpeg_write_icc_profile(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), const JOCTET *icc_data_ptr : itype(_Ptr<const JOCTET>), unsigned int icc_data_len);
 
 
 /* Decompression startup: read start of JPEG datastream to see what's there */
-EXTERN(int) jpeg_read_header(j_decompress_ptr cinfo, boolean require_image);
+EXTERN(int) jpeg_read_header(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), boolean require_image);
 /* Return value is one of: */
 #define JPEG_SUSPENDED           0 /* Suspended due to lack of input data */
 #define JPEG_HEADER_OK           1 /* Found valid image datastream */
@@ -979,27 +961,22 @@ EXTERN(int) jpeg_read_header(j_decompress_ptr cinfo, boolean require_image);
  */
 
 /* Main entry points for decompression */
-EXTERN(boolean) jpeg_start_decompress(j_decompress_ptr cinfo);
-EXTERN(JDIMENSION) jpeg_read_scanlines(j_decompress_ptr cinfo,
-                                       JSAMPARRAY scanlines,
-                                       JDIMENSION max_lines);
-EXTERN(JDIMENSION) jpeg_skip_scanlines(j_decompress_ptr cinfo,
-                                       JDIMENSION num_lines);
-EXTERN(void) jpeg_crop_scanline(j_decompress_ptr cinfo, JDIMENSION *xoffset,
-                                JDIMENSION *width);
-EXTERN(boolean) jpeg_finish_decompress(j_decompress_ptr cinfo);
+EXTERN(boolean) jpeg_start_decompress(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
+EXTERN(JDIMENSION) jpeg_read_scanlines(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), JSAMPLE *scanlines : itype(JSAMPARRAY), JDIMENSION max_lines);
+EXTERN(JDIMENSION) jpeg_skip_scanlines(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), JDIMENSION num_lines);
+EXTERN(void) jpeg_crop_scanline(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), JDIMENSION *xoffset : itype(_Ptr<JDIMENSION>), JDIMENSION *width : itype(_Ptr<JDIMENSION>));
+EXTERN(boolean) jpeg_finish_decompress(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
 
 /* Replaces jpeg_read_scanlines when reading raw downsampled data. */
-EXTERN(JDIMENSION) jpeg_read_raw_data(j_decompress_ptr cinfo, JSAMPIMAGE data,
-                                      JDIMENSION max_lines);
+EXTERN(JDIMENSION) jpeg_read_raw_data(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), JSAMPLE *data : itype(JSAMPIMAGE), JDIMENSION max_lines);
 
 /* Additional entry points for buffered-image mode. */
-EXTERN(boolean) jpeg_has_multiple_scans(j_decompress_ptr cinfo);
-EXTERN(boolean) jpeg_start_output(j_decompress_ptr cinfo, int scan_number);
-EXTERN(boolean) jpeg_finish_output(j_decompress_ptr cinfo);
-EXTERN(boolean) jpeg_input_complete(j_decompress_ptr cinfo);
-EXTERN(void) jpeg_new_colormap(j_decompress_ptr cinfo);
-EXTERN(int) jpeg_consume_input(j_decompress_ptr cinfo);
+EXTERN(boolean) jpeg_has_multiple_scans(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
+EXTERN(boolean) jpeg_start_output(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), int scan_number);
+EXTERN(boolean) jpeg_finish_output(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
+EXTERN(boolean) jpeg_input_complete(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
+EXTERN(void) jpeg_new_colormap(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
+EXTERN(int) jpeg_consume_input(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
 /* Return value is one of: */
 /* #define JPEG_SUSPENDED       0    Suspended due to lack of input data */
 #define JPEG_REACHED_SOS        1 /* Reached start of new scan */
@@ -1009,25 +986,20 @@ EXTERN(int) jpeg_consume_input(j_decompress_ptr cinfo);
 
 /* Precalculate output dimensions for current decompression parameters. */
 #if JPEG_LIB_VERSION >= 80
-EXTERN(void) jpeg_core_output_dimensions(j_decompress_ptr cinfo);
+EXTERN(void) jpeg_core_output_dimensions(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
 #endif
-EXTERN(void) jpeg_calc_output_dimensions(j_decompress_ptr cinfo);
+EXTERN(void) jpeg_calc_output_dimensions(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
 
 /* Control saving of COM and APPn markers into marker_list. */
-EXTERN(void) jpeg_save_markers(j_decompress_ptr cinfo, int marker_code,
-                               unsigned int length_limit);
+EXTERN(void) jpeg_save_markers(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), int marker_code, unsigned int length_limit);
 
 /* Install a special processing method for COM or APPn markers. */
-EXTERN(void) jpeg_set_marker_processor(j_decompress_ptr cinfo,
-                                       int marker_code,
-                                       jpeg_marker_parser_method routine);
+EXTERN(void) jpeg_set_marker_processor(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), int marker_code, boolean ((*routine)(struct jpeg_decompress_struct *)) : itype(jpeg_marker_parser_method));
 
 /* Read or write raw DCT coefficients --- useful for lossless transcoding. */
-EXTERN(jvirt_barray_ptr *) jpeg_read_coefficients(j_decompress_ptr cinfo);
-EXTERN(void) jpeg_write_coefficients(j_compress_ptr cinfo,
-                                     jvirt_barray_ptr *coef_arrays);
-EXTERN(void) jpeg_copy_critical_parameters(j_decompress_ptr srcinfo,
-                                           j_compress_ptr dstinfo);
+extern jvirt_barray_ptr *jpeg_read_coefficients(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr)) : itype(_Ptr<jvirt_barray_ptr>);
+EXTERN(void) jpeg_write_coefficients(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), jvirt_barray_ptr *coef_arrays : itype(_Ptr<jvirt_barray_ptr>));
+EXTERN(void) jpeg_copy_critical_parameters(struct jpeg_decompress_struct *srcinfo : itype(j_decompress_ptr), struct jpeg_compress_struct *dstinfo : itype(j_compress_ptr));
 
 /* If you choose to abort compression or decompression before completing
  * jpeg_finish_(de)compress, then you need to clean up to release memory,
@@ -1035,22 +1007,20 @@ EXTERN(void) jpeg_copy_critical_parameters(j_decompress_ptr srcinfo,
  * if you're done with the JPEG object, but if you want to clean it up and
  * reuse it, call this:
  */
-EXTERN(void) jpeg_abort_compress(j_compress_ptr cinfo);
-EXTERN(void) jpeg_abort_decompress(j_decompress_ptr cinfo);
+EXTERN(void) jpeg_abort_compress(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr));
+EXTERN(void) jpeg_abort_decompress(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
 
 /* Generic versions of jpeg_abort and jpeg_destroy that work on either
  * flavor of JPEG object.  These may be more convenient in some places.
  */
-EXTERN(void) jpeg_abort(j_common_ptr cinfo);
-EXTERN(void) jpeg_destroy(j_common_ptr cinfo);
+EXTERN(void) jpeg_abort(struct jpeg_common_struct *cinfo : itype(j_common_ptr));
+EXTERN(void) jpeg_destroy(struct jpeg_common_struct *cinfo : itype(j_common_ptr));
 
 /* Default restart-marker-resync procedure for use by data source modules */
-EXTERN(boolean) jpeg_resync_to_restart(j_decompress_ptr cinfo, int desired);
+EXTERN(boolean) jpeg_resync_to_restart(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), int desired);
 
 /* Read ICC profile.  See libjpeg.txt for usage information. */
-EXTERN(boolean) jpeg_read_icc_profile(j_decompress_ptr cinfo,
-                                      JOCTET **icc_data_ptr,
-                                      unsigned int *icc_data_len);
+EXTERN(boolean) jpeg_read_icc_profile(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), JOCTET **icc_data_ptr : itype(_Ptr<_Ptr<JOCTET>>), unsigned int *icc_data_len : itype(_Ptr<unsigned int>));
 
 
 /* These marker codes are exported since applications and data source modules

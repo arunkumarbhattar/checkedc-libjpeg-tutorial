@@ -23,7 +23,7 @@ typedef struct my_error_mgr * my_error_ptr;
  */
 
 METHODDEF(void)
-my_error_exit (j_common_ptr cinfo : itype(_Ptr<struct jpeg_common_struct>))
+my_error_exit (j_common_ptr cinfo)
 {
   /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
   my_error_ptr myerr = (my_error_ptr) cinfo->err;
@@ -57,8 +57,8 @@ read_JPEG_file (_Nt_array_ptr<char> filename)
    */
   struct my_error_mgr jerr = {};
   /* More stuff */
-  FILE * infile;		/* source file */
-  JSAMPARRAY buffer;		/* Output row buffer */
+  _Ptr<FILE> infile = ((void *)0);		/* source file */
+  JSAMPARRAY buffer = ((void *)0);		/* Output row buffer */
   int row_stride;		/* physical row width in output buffer */
 
   /* In this example we want to open the input file before doing anything else,
@@ -124,8 +124,8 @@ read_JPEG_file (_Nt_array_ptr<char> filename)
   /* JSAMPLEs per row in output buffer */
   row_stride = cinfo.output_width * cinfo.output_components;
   /* Make a one-row-high sample array that will go away when done with image */
-  buffer = ((JSAMPARRAY )(*cinfo.mem->alloc_sarray)
-		((_Ptr<struct jpeg_common_struct>) &cinfo, JPOOL_IMAGE, row_stride, 1));
+  buffer = (*cinfo.mem->alloc_sarray)
+		((_Ptr<struct jpeg_common_struct>) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
   if (cinfo.output_components == 1) {
     printf("P2\n");
