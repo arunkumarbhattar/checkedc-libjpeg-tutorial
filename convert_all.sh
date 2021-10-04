@@ -1,1 +1,1 @@
-3c -alltypes -warn-root-cause -output-dir=out ./to_ppm.c --
+3c -alltypes -warn-root-cause -output-dir=out ./to_ppm.c -- -I ./include
