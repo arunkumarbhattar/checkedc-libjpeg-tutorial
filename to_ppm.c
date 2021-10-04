@@ -4,7 +4,7 @@
 #define HAVE_PROTOTYPES
 #include <jpeglib.h>
 
-void put_scanline_someplace(JSAMPROW buffer, int row_stride) {
+void put_scanline_someplace(JSAMPROW buffer : count(row_stride), int row_stride) {
   for (int i = 0; i < row_stride; i++)
     printf("%3d ", buffer[i]);
   printf("\n");
@@ -16,7 +16,7 @@ struct my_error_mgr {
   jmp_buf setjmp_buffer;	/* for return to caller */
 };
 
-typedef struct my_error_mgr * my_error_ptr;
+typedef _Ptr<struct my_error_mgr> my_error_ptr;
 
 /*
  * Here's the routine that will replace the standard error_exit method:
@@ -26,7 +26,7 @@ METHODDEF(void)
 my_error_exit (j_common_ptr cinfo)
 {
   /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
-  my_error_ptr myerr = (my_error_ptr) cinfo->err;
+  my_error_ptr myerr = (_Ptr<struct my_error_mgr>) cinfo->err;
 
   /* Always display the message. */
   /* We could postpone this until after returning, if we chose. */
@@ -44,21 +44,21 @@ my_error_exit (j_common_ptr cinfo)
 
 
 GLOBAL(int)
-read_JPEG_file (char * filename)
+read_JPEG_file (_Nt_array_ptr<char> filename)
 {
 
   /* This struct contains the JPEG decompression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).
    */
-  struct jpeg_decompress_struct cinfo;
+  struct jpeg_decompress_struct cinfo = {};
   /* We use our private extension JPEG error handler.
    * Note that this struct must live as long as the main JPEG parameter
    * struct, to avoid dangling-pointer problems.
    */
-  struct my_error_mgr jerr;
+  struct my_error_mgr jerr = {};
   /* More stuff */
-  FILE * infile;		/* source file */
-  JSAMPARRAY buffer;		/* Output row buffer */
+  _Ptr<FILE> infile = ((void *)0);		/* source file */
+  JSAMPARRAY buffer = ((void *)0);		/* Output row buffer */
   int row_stride;		/* physical row width in output buffer */
 
   /* In this example we want to open the input file before doing anything else,
@@ -125,7 +125,7 @@ read_JPEG_file (char * filename)
   row_stride = cinfo.output_width * cinfo.output_components;
   /* Make a one-row-high sample array that will go away when done with image */
   buffer = (*cinfo.mem->alloc_sarray)
-		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+		((_Ptr<struct jpeg_common_struct>) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
   if (cinfo.output_components == 1) {
     printf("P2\n");
@@ -150,7 +150,7 @@ read_JPEG_file (char * filename)
      */
     (void) jpeg_read_scanlines(&cinfo, buffer, 1);
     /* Assume put_scanline_someplace wants a pointer and sample count. */
-    put_scanline_someplace(buffer[0], row_stride);
+    put_scanline_someplace(_Assume_bounds_cast<JSAMPROW >(buffer[0],  count(row_stride)), row_stride);
   }
 
   /* Step 7: Finish decompression */
@@ -181,7 +181,7 @@ read_JPEG_file (char * filename)
 }
 
 
-int main(int argc, char **argv) {
-  char *file = argv[1];
+int main(int argc, _Array_ptr<_Nt_array_ptr<char>> argv : count(argc)) {
+  _Nt_array_ptr<char> file = argv[1];
   return read_JPEG_file(file);
 }
