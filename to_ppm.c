@@ -3,6 +3,7 @@
 
 #define HAVE_PROTOTYPES
 #include <jpeglib.h>
+#pragma CHECKED_SCOPE on
 
 void put_scanline_someplace(JSAMPROW buffer : count(row_stride), int row_stride) {
   for (int i = 0; i < row_stride; i++)
