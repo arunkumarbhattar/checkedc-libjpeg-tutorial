@@ -4,7 +4,7 @@
 #define HAVE_PROTOTYPES
 #include <jpeglib.h>
 
-void put_scanline_someplace(JSAMPROW buffer, int row_stride) {
+void put_scanline_someplace(JSAMPROW buffer : itype(_Array_ptr<JSAMPLE>) count(row_stride), int row_stride) {
   for (int i = 0; i < row_stride; i++)
     printf("%3d ", buffer[i]);
   printf("\n");
@@ -44,7 +44,7 @@ my_error_exit (j_common_ptr cinfo)
 
 
 GLOBAL(int)
-read_JPEG_file (char * filename)
+read_JPEG_file (_Nt_array_ptr<char> filename)
 {
 
   /* This struct contains the JPEG decompression parameters and pointers to
@@ -181,7 +181,7 @@ read_JPEG_file (char * filename)
 }
 
 
-int main(int argc, char **argv) {
-  char *file = argv[1];
+int main(int argc, _Array_ptr<_Nt_array_ptr<char>> argv : count(argc)) {
+  _Nt_array_ptr<char> file = argv[1];
   return read_JPEG_file(file);
 }
