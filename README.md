@@ -34,6 +34,10 @@ The Checked C standard library headers from
 are also required. These should already be available if 3C was built according
 to the
 [3C build instructions](https://github.com/correctcomputation/checkedc-clang/blob/main/clang/docs/checkedc/3C/INSTALL.md).
+This tutorial uses these repositories at commits
+[2a0df40](https://github.com/correctcomputation/checkedc-clang/commit/2a0df403e4c803edecbe8ed6019320d7b170708a) and
+[7c6f388](https://github.com/correctcomputation/checkedc/commit/7c6f388a816bcca14cf2144f9b78b6e27957a09d)
+respectively.
 
 The premise of this tutorial is to convert C code that depends on libjpeg, so
 the library should be installed. A copy of the relevant header file is included
