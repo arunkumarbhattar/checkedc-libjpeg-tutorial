@@ -349,7 +349,12 @@ _Unchecked {
 put_scanline_someplace(row, row_stride);
 ```
 
-The exact fix required is again provided in a patch file.
+Another compiler error is raised because libjpeg using the standard library
+header `setjmp.h` for error handling. This header file does not yet have
+a checked version, so we need to surround calls to its functions in
+`_Unchecked` blocks.
+
+The exact fixes required are again provided in a patch file.
 
 ```{.bash file=tutorial.sh}
 git apply < patches/pragma_fixes.patch
