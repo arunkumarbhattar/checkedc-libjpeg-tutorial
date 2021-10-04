@@ -63,7 +63,7 @@ export PATH="~/checkedc-clang/build/bin/:$PATH"
 # Initial Conversion
 
 The tutorial begins with unconverted code on
-<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/START_COMMIT" data-commit-start="true">this commit</a>.
+<a href="https://github.com/correctcomputation/libjpeg_tutorial/commit/660412ea837da94b43133dd38cdffc960331ec00" data-commit-start="true">this commit</a>.
 To convert the sample program, we will execute 3C through the provided
 `convert_all.sh` script. This script invokes 3C on the source file with
 some options to control the specifics of the conversion process. (The
