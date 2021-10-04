@@ -1,7 +1,36 @@
 This file is included from the libjpeg distribution. The licence included in
-the LEGAL ISSUES section applies to the header file jpeglib.h and the source
-file to_ppm.c which is a trivial modification of the file example.c
-distributed with libjpeg.
+the LEGAL ISSUES section applies to the header file jpeglib.h and source file
+to_ppm.c which are modified verisons of files from libjpeg, and all other files
+in this repository to the extent that they can be considered derivative works
+of libjpeg.
+
+The modifications made to libjpeg files can be viewed by comparing the
+unmodified versions of these files (included in the directory `original)
+to the files in the base directory (`diff to_ppm.c original/example.c` and
+`diff include/libjpeg.h original/libjpeg.h).
+
+Correct Computation's contributions to this repository are available under the
+MIT licence.
+
+Copyright © 2021 Correct Computation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the “Software”), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 The Independent JPEG Group's JPEG software
 ==========================================
