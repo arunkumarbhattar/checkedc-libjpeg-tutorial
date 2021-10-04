@@ -834,7 +834,7 @@ struct jpeg_memory_mgr {
   /* Method pointers */
   _Ptr<void *(_Ptr<struct jpeg_common_struct> cinfo, int pool_id, size_t sizeofobject)> alloc_small;
   _Ptr<void *(_Ptr<struct jpeg_common_struct> cinfo, int pool_id, size_t sizeofobject)> alloc_large;
-  _Ptr<_Array_ptr<JSAMPROW> (_Ptr<struct jpeg_common_struct> cinfo, int pool_id, JDIMENSION samplesperrow, JDIMENSION numrows)> alloc_sarray;
+  _Ptr<_Array_ptr<JSAMPROW> (_Ptr<struct jpeg_common_struct> cinfo, int pool_id, JDIMENSION samplesperrow, JDIMENSION numrows) : count(numrows)> alloc_sarray;
   _Ptr<_Ptr<JBLOCKROW> (_Ptr<struct jpeg_common_struct> cinfo, int pool_id, JDIMENSION blocksperrow, JDIMENSION numrows)> alloc_barray;
   _Ptr<_Ptr<struct jvirt_sarray_control> (_Ptr<struct jpeg_common_struct> cinfo, int pool_id, boolean pre_zero, JDIMENSION samplesperrow, JDIMENSION numrows, JDIMENSION maxaccess)> request_virt_sarray;
   _Ptr<_Ptr<struct jvirt_barray_control> (_Ptr<struct jpeg_common_struct> cinfo, int pool_id, boolean pre_zero, JDIMENSION blocksperrow, JDIMENSION numrows, JDIMENSION maxaccess)> request_virt_barray;
@@ -924,7 +924,7 @@ extern JHUFF_TBL *jpeg_alloc_huff_table(struct jpeg_common_struct *cinfo : itype
 
 /* Main entry points for compression */
 EXTERN(void) jpeg_start_compress(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), boolean write_all_tables);
-EXTERN(JDIMENSION) jpeg_write_scanlines(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), JSAMPLE *scanlines : itype(JSAMPARRAY), JDIMENSION num_lines);
+EXTERN(JDIMENSION) jpeg_write_scanlines(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), unsigned char **scanlines : itype(JSAMPARRAY), JDIMENSION num_lines);
 EXTERN(void) jpeg_finish_compress(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr));
 
 #if JPEG_LIB_VERSION >= 70
@@ -933,7 +933,7 @@ EXTERN(void) jpeg_calc_jpeg_dimensions(struct jpeg_compress_struct *cinfo : ityp
 #endif
 
 /* Replaces jpeg_write_scanlines when writing raw downsampled data. */
-EXTERN(JDIMENSION) jpeg_write_raw_data(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), JSAMPLE *data : itype(JSAMPIMAGE), JDIMENSION num_lines);
+EXTERN(JDIMENSION) jpeg_write_raw_data(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), unsigned char ***data : itype(JSAMPIMAGE), JDIMENSION num_lines);
 
 /* Write a special marker.  See libjpeg.txt concerning safe usage. */
 EXTERN(void) jpeg_write_marker(struct jpeg_compress_struct *cinfo : itype(j_compress_ptr), int marker, const JOCTET *dataptr : itype(_Ptr<const JOCTET>), unsigned int datalen);
@@ -962,13 +962,13 @@ EXTERN(int) jpeg_read_header(struct jpeg_decompress_struct *cinfo : itype(j_deco
 
 /* Main entry points for decompression */
 EXTERN(boolean) jpeg_start_decompress(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
-EXTERN(JDIMENSION) jpeg_read_scanlines(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), JSAMPLE *scanlines : itype(JSAMPARRAY), JDIMENSION max_lines);
+EXTERN(JDIMENSION) jpeg_read_scanlines(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), unsigned char **scanlines : itype(JSAMPARRAY), JDIMENSION max_lines);
 EXTERN(JDIMENSION) jpeg_skip_scanlines(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), JDIMENSION num_lines);
 EXTERN(void) jpeg_crop_scanline(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), JDIMENSION *xoffset : itype(_Ptr<JDIMENSION>), JDIMENSION *width : itype(_Ptr<JDIMENSION>));
 EXTERN(boolean) jpeg_finish_decompress(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));
 
 /* Replaces jpeg_read_scanlines when reading raw downsampled data. */
-EXTERN(JDIMENSION) jpeg_read_raw_data(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), JSAMPLE *data : itype(JSAMPIMAGE), JDIMENSION max_lines);
+EXTERN(JDIMENSION) jpeg_read_raw_data(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr), unsigned char ***data : itype(JSAMPIMAGE), JDIMENSION max_lines);
 
 /* Additional entry points for buffered-image mode. */
 EXTERN(boolean) jpeg_has_multiple_scans(struct jpeg_decompress_struct *cinfo : itype(j_decompress_ptr));

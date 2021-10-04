@@ -26,7 +26,7 @@ METHODDEF(void)
 my_error_exit (j_common_ptr cinfo)
 {
   /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
-  my_error_ptr myerr = (_Ptr<struct my_error_mgr>) cinfo->err;
+  my_error_ptr myerr = _Dynamic_bounds_cast<_Ptr<struct my_error_mgr>>(cinfo->err);
 
   /* Always display the message. */
   /* We could postpone this until after returning, if we chose. */
@@ -58,7 +58,7 @@ read_JPEG_file (_Nt_array_ptr<char> filename)
   struct my_error_mgr jerr = {};
   /* More stuff */
   _Ptr<FILE> infile = ((void *)0);		/* source file */
-  JSAMPARRAY buffer = ((void *)0);		/* Output row buffer */
+  JSAMPARRAY buffer : count(1) = ((void *)0);		/* Output row buffer */
   int row_stride;		/* physical row width in output buffer */
 
   /* In this example we want to open the input file before doing anything else,
