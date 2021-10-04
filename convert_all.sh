@@ -1,1 +1,1 @@
-3c -alltypes -warn-root-cause -output-dir=out ./to_ppm.c -- -I ./include
+3c -alltypes -warn-root-cause -output-dir=out ./to_ppm.c  -infer-types-for-undefs -- -I ./include
